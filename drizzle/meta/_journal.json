@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1766055070713,
-      "tag": "0000_optimal_zuras",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1766151020342,
-      "tag": "0001_equal_shadowcat",
+      "when": 1766252788851,
+      "tag": "0000_solid_zaladane",
       "breakpoints": true
     }
   ]
