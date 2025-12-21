@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator'
 import { ROLES } from 'shared/constants/roles'
-import type{ Role } from 'shared/type/type.role'
+import type { Role } from 'shared/type/type.role'
 
 
 
