@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt.guard';
 
@@ -36,7 +38,24 @@ export class AuthController {
 
   @Get("me")
   @UseGuards(JwtAuthGuard)
-  me(@Req() req:Request){
-    return req.user
+  async me(@Req() req:Request){
+    return this.authService.getMe(req.user.id)
+  }
+
+  @Post("logout")
+  @UseGuards(JwtAuthGuard)
+  async logout(@Res({passthrough: true}) res: Response){
+    res.clearCookie("access_token")
+    return{message: "Выход выполнен"}
+  }
+
+  @Post("forgot-password")
+  async forgotPassword(@Body() params: ForgotPasswordDto) {
+    return this.authService.forgotPassword(params);
+  }
+
+  @Post("reset-password")
+  async resetPassword(@Body() params: ResetPasswordDto) {
+    return this.authService.resetPassword(params);
   }
 }
