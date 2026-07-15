@@ -5,24 +5,27 @@ import {
   IsNotEmpty,
   IsString,
   MinLength,
-} from 'class-validator'
-import { ROLES } from 'shared/constants/roles'
-import type { Role } from 'shared/type/type.role'
-
-
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { ROLES } from 'shared/constants/roles';
+import type { Role } from 'shared/type/type.role';
 
 export class RegisterDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  fullname: string
+  fullname: string;
 
+  @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
-  email: string
+  email: string;
 
+  @ApiProperty({ minLength: 8 })
   @IsString()
   @MinLength(8)
-  password: string
+  password: string;
 
+  @ApiProperty({ enum: ROLES })
   @IsEnum(ROLES)
-  role: Role
+  role: Role;
 }

@@ -25,12 +25,13 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const user = await db.select()
+    const user = await db
+      .select()
       .from(usersTable)
       .where(eq(usersTable.email, dto.email))
       .limit(1);
-    console.log(user);
-    if (user.length) throw new ConflictException('Пользователь с таким email уже существует');
+    if (user.length)
+      throw new ConflictException('Пользователь с таким email уже существует');
     const hashPassowrd = await hashFunction(dto.password);
     const newUser = await db
       .insert(usersTable)
@@ -45,12 +46,14 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await db.select()
+    const user = await db
+      .select()
       .from(usersTable)
       .where(eq(usersTable.email, dto.email))
       .limit(1);
 
-    // if (!user.length) throw new UnauthorizedException('Неверный email или пароль');
+    if (!user.length)
+      throw new UnauthorizedException('Неверный email или пароль');
 
     const isPasswordValid = await unHashFunction(
       dto.password,
@@ -79,7 +82,8 @@ export class AuthService {
   }
 
   async getMe(id: number) {
-    const [user] = await db.select()
+    const [user] = await db
+      .select()
       .from(usersTable)
       .where(eq(usersTable.id, id))
       .limit(1);
@@ -94,12 +98,14 @@ export class AuthService {
   }
 
   async forgotPassword(dto: ForgotPasswordDto) {
-    const [user] = await db.select()
+    const [user] = await db
+      .select()
       .from(usersTable)
       .where(eq(usersTable.email, dto.email))
       .limit(1);
 
-    if (!user) throw new NotFoundException('Пользователь с таким email не найден');
+    if (!user)
+      throw new NotFoundException('Пользователь с таким email не найден');
 
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 час
@@ -116,22 +122,28 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto) {
-    const [resetToken] = await db.select()
+    const [resetToken] = await db
+      .select()
       .from(passwordResetTokensTable)
       .where(eq(passwordResetTokensTable.token, dto.token))
       .limit(1);
 
-    if (!resetToken) throw new BadRequestException('Неверная или истёкшая ссылка');
-    if (resetToken.used) throw new BadRequestException('Ссылка уже была использована');
-    if (resetToken.expiresAt < new Date()) throw new BadRequestException('Ссылка истекла');
+    if (!resetToken)
+      throw new BadRequestException('Неверная или истёкшая ссылка');
+    if (resetToken.used)
+      throw new BadRequestException('Ссылка уже была использована');
+    if (resetToken.expiresAt < new Date())
+      throw new BadRequestException('Ссылка истекла');
 
     const newHash = await hashFunction(dto.password);
 
-    await db.update(usersTable)
+    await db
+      .update(usersTable)
       .set({ passwordHash: newHash })
       .where(eq(usersTable.id, resetToken.userId));
 
-    await db.update(passwordResetTokensTable)
+    await db
+      .update(passwordResetTokensTable)
       .set({ used: true })
       .where(eq(passwordResetTokensTable.id, resetToken.id));
 
